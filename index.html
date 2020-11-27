@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        html {
+            font-size: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            font-size: 1rem;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: tomato;
+        }
+
+        #controls {
+            padding: .5rem;
+            margin: 1rem 1rem 0rem 1rem;
+            border: 1px solid black;
+            background-color: teal;
+        }
+
+        #controls button {
+            cursor: pointer;
+            padding: .2rem .4rem;
+            border-radius: .2rem;
+            border: 2px solid black;
+            background-color: white;
+        }
+
+        #controls input {
+            padding: .2rem .4rem;
+            border-radius: .2rem;
+            border: 2px solid black;
+        }
+
+        #board {
+            position: relative;
+            flex-grow: 1;
+            margin: 1rem;
+            border: 1px solid black;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        #board .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid black;
+            box-sizing: border-box;
+            opacity: .85;
+        }
+    </style>
+
+    <script src="main.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <form id="controls">
+            <label for="circles">Circles:</label>
+            <input id="circles" name="circles" type="text" value="75">
+            <button id="render">Render</button>
+            <button id="pause">Pause</button>
+            <button id="play">Play</button>
+            <button id="clear">Clear</button>
+        </form>
+        <div id="board"></div>
+    </div>
+</body>
+
+</html>
