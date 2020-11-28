@@ -1,8 +1,8 @@
 (function () {
     const OPTIONS = {
         STEP: 1000 / 60,
-        SIZE: [30, 50],
-        SPEED: [3, 7]
+        SIZE: [15, 50],
+        SPEED: [3, 9]
     };
     const RND = {
         getInt(min, max) {
@@ -208,7 +208,6 @@
                 RND.getBinary()
             );
             this.onClick = this.onClick.bind(this);
-            this.onMouseEnter = this.onMouseEnter.bind(this);
             this.render();
         }
         getBounds() {
@@ -242,18 +241,13 @@
             this.$el = DOM.createEl(template);
             this.$board.insertAdjacentElement('afterbegin', this.$el);
             this.$el.addEventListener("click", this.onClick);
-            this.$el.addEventListener("mouseenter", this.onMouseEnter);
         }
         destroy() {
             this.$el.removeEventListener("click", this.onClick);
-            this.$el.removeEventListener("mouseenter", this.onMouseEnter);
             this.$board.removeChild(this.$el);
         }
         onClick(event) {
             this.isBlocked = !this.isBlocked;
-        }
-        onMouseEnter(event) {
-            this.isBlocked = true;
             this.recolor();
         }
         modSpeed(value) {
