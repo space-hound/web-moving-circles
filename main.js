@@ -142,6 +142,7 @@
             this.$speed.style.display = "inline-block";
             this.$speedlabel.style.display = "inline-block";
             /*--------------------------------------------------------*/
+            this.onBoardSizeChange();
             this.interval = setInterval(() => {
                 this.loop();
             }, OPTIONS.STEP)
