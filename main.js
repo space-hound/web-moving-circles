@@ -1,8 +1,8 @@
 (function () {
     const OPTIONS = {
-        STEP: 60,
+        STEP: 1000 / 60,
         SIZE: [30, 50],
-        SPEED: [10, 10]
+        SPEED: [3, 7]
     };
     const RND = {
         getInt(min, max) {
@@ -25,18 +25,19 @@
         byId(id) {
             return document.getElementById(id);
         },
-        getEl() {
-            const parent = selector ? root : document;
-            return parent.querySelector(selector)
+        getEl(selector, root = document) {
+            return root.querySelector(selector)
         },
         getEls(selector, root = document) {
             return [...root.querySelectorAll(selector)];
         },
+        _template: null,
         createEl(str) {
-            // may cause leaks
-            const template = document.createElement('template');
-            template.innerHTML = str.trim();
-            return template.content.firstChild;
+            if (!this._template) {
+                this._template = document.createElement('template');
+            }
+            this._template.innerHTML = str.trim();
+            return this._template.content.firstChild;
         }
     };
     class Vector {
@@ -61,18 +62,28 @@
         constructor() {
             this.circles = [];
             this.interval = null;
+            /*--------------------------------------------------------*/
             this.$board = DOM.byId("board");
             this.$form = DOM.byId("controls");
             this.$input = DOM.byId("circles");
             this.$pause = DOM.byId("pause");
             this.$play = DOM.byId("play");
             this.$clear = DOM.byId("clear");
-            this.onAction = this.onAction.bind(this);
-            this.$form.addEventListener("submit", this.onAction);
-
+            this.$recolor = DOM.byId("recolor");
+            this.$speed = DOM.byId("speed");
+            this.$speedlabel = DOM.getEl("label[for=speed]");
+            /*--------------------------------------------------------*/
             this.$play.style.display = "none";
             this.$pause.style.display = "none";
             this.$clear.style.display = "none";
+            this.$recolor.style.display = "none";
+            this.$speed.style.display = "none";
+            this.$speedlabel.style.display = "none";
+            /*--------------------------------------------------------*/
+            this.onAction = this.onAction.bind(this);
+            this.onSpeedChage = this.onSpeedChage.bind(this);
+            this.$form.addEventListener("submit", this.onAction);
+            this.$speed.addEventListener("input", this.onSpeedChage);
         }
         get CirclesLength() {
             return parseInt(this.$input.value) || 0;
@@ -95,9 +106,17 @@
                     break;
                 case "clear": this.handleClear();
                     break;
+                case "recolor": this.handleRecolor();
+                    break;
                 default:
                     break;
             }
+        }
+        onSpeedChage(event) {
+            const value = parseInt(this.$speed.value);
+            this.circles.forEach((circle) => {
+                circle.modSpeed(value);
+            });
         }
         handleRender() {
             this.handleClear();
@@ -105,27 +124,47 @@
             this.handlePlay();
         }
         handlePlay() {
+            /*--------------------------------------------------------*/
             this.$play.style.display = "none";
             this.$pause.style.display = "inline-block";
             this.$clear.style.display = "inline-block";
+            this.$recolor.style.display = "inline-block";
+            this.$speed.style.display = "inline-block";
+            this.$speedlabel.style.display = "inline-block";
+            /*--------------------------------------------------------*/
             this.interval = setInterval(() => {
                 this.loop();
             }, OPTIONS.STEP)
         }
         handlePause() {
+            /*--------------------------------------------------------*/
             this.$pause.style.display = "none";
+            this.$speed.style.display = "none";
+            this.$speedlabel.style.display = "none";
             this.$play.style.display = "inline-block";
+            /*--------------------------------------------------------*/
             clearInterval(this.interval);
         }
         handleClear() {
-            clearInterval(this.interval);
+            /*--------------------------------------------------------*/
             this.$clear.style.display = "none";
+            this.$recolor.style.display = "none";
             this.$play.style.display = "none";
             this.$pause.style.display = "none";
+            this.$speed.style.display = "none";
+            this.$speedlabel.style.display = "none";
+            /*--------------------------------------------------------*/
+            clearInterval(this.interval);
             this.Circles.forEach((circle) => {
                 circle.destroy();
             });
             this.Circles = [];
+        }
+        handleRecolor() {
+            this.circles.forEach((circle) => {
+                circle.recolor();
+                circle.draw();
+            });
         }
         setup() {
             this.Circles = [
@@ -141,6 +180,7 @@
     }
     class Circle {
         constructor($board) {
+            this.$el = null;
             this.$board = $board;
             this.isBlocked = false;
             this.color = RND.getColor();
@@ -153,6 +193,7 @@
                 OPTIONS.SPEED[0],
                 OPTIONS.SPEED[1]
             );
+            this.dSpeed = this.speed;
             this.bounds = this.getBounds();
             this.Vpos = new Vector(
                 RND.getInt(
@@ -213,6 +254,13 @@
         }
         onMouseEnter(event) {
             this.isBlocked = true;
+            this.recolor();
+        }
+        modSpeed(value) {
+            const delta = this.speed * (value / 100);
+            this.dSpeed = this.speed + delta;
+        }
+        recolor() {
             this.color = RND.getColor();
         }
         check() {
@@ -237,7 +285,7 @@
             if (this.isBlocked) return;
             this.Vpos = this.Vpos.add(
                 this.Vdir.scale(
-                    this.speed
+                    this.dSpeed
                 )
             );
             this.check();

@@ -31,6 +31,8 @@
         }
 
         #controls {
+            display: flex;
+            align-items: center;
             padding: .5rem;
             margin: 1rem 1rem 0rem 1rem;
             border: 1px solid black;
@@ -45,10 +47,20 @@
             background-color: white;
         }
 
-        #controls input {
+        #controls input[id=circles] {
+            margin-left: .3rem;
             padding: .2rem .4rem;
             border-radius: .2rem;
             border: 2px solid black;
+        }
+
+        #controls button {
+            margin: 0 .3rem;
+        }
+
+        #controls input[id=speed] {
+            margin-left: .3rem;
+            cursor: pointer;
         }
 
         #board {
@@ -78,9 +90,12 @@
             <label for="circles">Circles:</label>
             <input id="circles" name="circles" type="text" value="75">
             <button id="render">Render</button>
+            <button id="clear">Clear</button>
+            <button id="recolor">Recolor</button>
             <button id="pause">Pause</button>
             <button id="play">Play</button>
-            <button id="clear">Clear</button>
+            <label for="speed">Speed:</label>
+            <input id="speed" name="volume" type="range" min="-100" max="100" value="0">
         </form>
         <div id="board"></div>
     </div>
