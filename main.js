@@ -82,8 +82,13 @@
             /*--------------------------------------------------------*/
             this.onAction = this.onAction.bind(this);
             this.onSpeedChage = this.onSpeedChage.bind(this);
+            this.onBoardSizeChange = this.onBoardSizeChange.bind(this);
+            /*--------------------------------------------------------*/
             this.$form.addEventListener("submit", this.onAction);
             this.$speed.addEventListener("input", this.onSpeedChage);
+            /*--------------------------------------------------------*/
+            this.boundsobserver = new ResizeObserver(this.onBoardSizeChange);
+            this.boundsobserver.observe(this.$board);
         }
         get CirclesLength() {
             return parseInt(this.$input.value) || 0;
@@ -116,6 +121,11 @@
             const value = parseInt(this.$speed.value);
             this.circles.forEach((circle) => {
                 circle.modSpeed(value);
+            });
+        }
+        onBoardSizeChange(event) {
+            this.circles.forEach((circle) => {
+                circle.rebound();
             });
         }
         handleRender() {
@@ -256,6 +266,9 @@
         }
         recolor() {
             this.color = RND.getColor();
+        }
+        rebound() {
+            this.bounds = this.getBounds();
         }
         check() {
             if (this.Vpos.x <= this.bounds.x.min) {
