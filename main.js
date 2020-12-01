@@ -72,6 +72,8 @@
             this.$recolor = DOM.byId("recolor");
             this.$speed = DOM.byId("speed");
             this.$speedlabel = DOM.getEl("label[for=speed]");
+            this.$size = DOM.byId("size");
+            this.$sizelabel = DOM.getEl("label[for=size]");
             /*--------------------------------------------------------*/
             this.$play.style.display = "none";
             this.$pause.style.display = "none";
@@ -79,13 +81,17 @@
             this.$recolor.style.display = "none";
             this.$speed.style.display = "none";
             this.$speedlabel.style.display = "none";
+            this.$size.style.display = "none";
+            this.$sizelabel.style.display = "none";
             /*--------------------------------------------------------*/
             this.onAction = this.onAction.bind(this);
             this.onSpeedChage = this.onSpeedChage.bind(this);
+            this.onSizeChange = this.onSizeChange.bind(this);
             this.onBoardSizeChange = this.onBoardSizeChange.bind(this);
             /*--------------------------------------------------------*/
             this.$form.addEventListener("submit", this.onAction);
             this.$speed.addEventListener("input", this.onSpeedChage);
+            this.$size.addEventListener("input", this.onSizeChange);
             /*--------------------------------------------------------*/
             this.boundsobserver = new ResizeObserver(this.onBoardSizeChange);
             this.boundsobserver.observe(this.$board);
@@ -123,6 +129,12 @@
                 circle.modSpeed(value);
             });
         }
+        onSizeChange(event) {
+            const value = parseInt(this.$size.value);
+            this.circles.forEach((circle) => {
+                circle.modSize(value);
+            });
+        }
         onBoardSizeChange(event) {
             this.circles.forEach((circle) => {
                 circle.rebound();
@@ -141,6 +153,8 @@
             this.$recolor.style.display = "inline-block";
             this.$speed.style.display = "inline-block";
             this.$speedlabel.style.display = "inline-block";
+            this.$size.style.display = "inline-block";
+            this.$sizelabel.style.display = "inline-block";
             /*--------------------------------------------------------*/
             this.onBoardSizeChange();
             this.interval = setInterval(() => {
@@ -152,6 +166,8 @@
             this.$pause.style.display = "none";
             this.$speed.style.display = "none";
             this.$speedlabel.style.display = "none";
+            this.$size.style.display = "none";
+            this.$sizelabel.style.display = "none";
             this.$play.style.display = "inline-block";
             /*--------------------------------------------------------*/
             clearInterval(this.interval);
@@ -164,6 +180,8 @@
             this.$pause.style.display = "none";
             this.$speed.style.display = "none";
             this.$speedlabel.style.display = "none";
+            this.$size.style.display = "none";
+            this.$sizelabel.style.display = "none";
             /*--------------------------------------------------------*/
             clearInterval(this.interval);
             this.Circles.forEach((circle) => {
@@ -199,7 +217,8 @@
                 OPTIONS.SIZE[0],
                 OPTIONS.SIZE[1]
             );
-            this.dSize = Math.floor(this.size / 2);
+            this.dSize = this.size;
+            this.hSize = Math.floor(this.dSize / 2);
             this.speed = RND.getInt(
                 OPTIONS.SPEED[0],
                 OPTIONS.SPEED[1]
@@ -225,23 +244,23 @@
             const styles = window.getComputedStyle(this.$board);
             return {
                 x: {
-                    min: 0 + this.dSize,
-                    max: parseInt(styles.height) - this.dSize
+                    min: 0 + this.hSize,
+                    max: parseInt(styles.height) - this.hSize
                 },
                 y: {
-                    min: 0 + this.dSize,
-                    max: parseInt(styles.width) - this.dSize
+                    min: 0 + this.hSize,
+                    max: parseInt(styles.width) - this.hSize
                 }
             };
         }
         getCircleStyle() {
             return [
                 `background-color: #${this.color}`,
-                `width: ${this.size}px`,
-                `height: ${this.size}px`,
+                `width: ${this.dSize}px`,
+                `height: ${this.dSize}px`,
                 `top: ${this.Vpos.x}px`,
                 `left: ${this.Vpos.y}px`,
-                `transform: translate(${-this.dSize}px, ${-this.dSize}px)`
+                `transform: translate(${-this.hSize}px, ${-this.hSize}px)`
             ].join(";");
         }
         render() {
@@ -264,6 +283,12 @@
         modSpeed(value) {
             const delta = this.speed * (value / 100);
             this.dSpeed = this.speed + delta;
+        }
+        modSize(value) {
+            const delta = this.size * (value / 100);
+            this.dSize = Math.floor(this.size + delta);
+            this.hSize = Math.floor(this.dSize / 2);
+            this.rebound();
         }
         recolor() {
             this.color = RND.getColor();
@@ -299,9 +324,12 @@
             this.check();
         }
         draw() {
-            this.$el.style.top = `${this.Vpos.x}px`;
-            this.$el.style.left = `${this.Vpos.y}px`;
-            this.$el.style.backgroundColor = `#${this.color}`;
+            /*
+                this.$el.style.top = `${this.Vpos.x}px`;
+                this.$el.style.left = `${this.Vpos.y}px`;
+                this.$el.style.backgroundColor = `#${this.color}`;
+            */
+            this.$el.style.cssText = this.getCircleStyle();
         }
     }
     document.addEventListener("DOMContentLoaded", (e) => {
