@@ -95,6 +95,7 @@
             /*--------------------------------------------------------*/
             this.boundsobserver = new ResizeObserver(this.onBoardSizeChange);
             this.boundsobserver.observe(this.$board);
+            DOM.getEl("#container").style.pointerEvents = "auto"
         }
         get CirclesLength() {
             return parseInt(this.$input.value) || 0;
