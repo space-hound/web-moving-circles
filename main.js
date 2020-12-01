@@ -70,6 +70,7 @@
             this.$play = DOM.byId("play");
             this.$clear = DOM.byId("clear");
             this.$recolor = DOM.byId("recolor");
+            this.$redirect = DOM.byId("redirect");
             this.$speed = DOM.byId("speed");
             this.$speedlabel = DOM.getEl("label[for=speed]");
             this.$size = DOM.byId("size");
@@ -79,6 +80,7 @@
             this.$pause.style.display = "none";
             this.$clear.style.display = "none";
             this.$recolor.style.display = "none";
+            this.$redirect.style.display = "none";
             this.$speed.style.display = "none";
             this.$speedlabel.style.display = "none";
             this.$size.style.display = "none";
@@ -120,6 +122,8 @@
                     break;
                 case "recolor": this.handleRecolor();
                     break;
+                case "redirect": this.handleRedirect();
+                    break;
                 default:
                     break;
             }
@@ -152,6 +156,7 @@
             this.$pause.style.display = "inline-block";
             this.$clear.style.display = "inline-block";
             this.$recolor.style.display = "inline-block";
+            this.$redirect.style.display = "inline-block";
             this.$speed.style.display = "inline-block";
             this.$speedlabel.style.display = "inline-block";
             this.$size.style.display = "inline-block";
@@ -169,6 +174,7 @@
             this.$speedlabel.style.display = "none";
             this.$size.style.display = "none";
             this.$sizelabel.style.display = "none";
+            this.$redirect.style.display = "none";
             this.$play.style.display = "inline-block";
             /*--------------------------------------------------------*/
             clearInterval(this.interval);
@@ -177,6 +183,7 @@
             /*--------------------------------------------------------*/
             this.$clear.style.display = "none";
             this.$recolor.style.display = "none";
+            this.$redirect.style.display = "none";
             this.$play.style.display = "none";
             this.$pause.style.display = "none";
             this.$speed.style.display = "none";
@@ -194,6 +201,11 @@
             this.circles.forEach((circle) => {
                 circle.recolor();
                 circle.draw();
+            });
+        }
+        handleRedirect() {
+            this.circles.forEach((circle) => {
+                circle.redirect();
             });
         }
         setup() {
@@ -293,6 +305,12 @@
         }
         recolor() {
             this.color = RND.getColor();
+        }
+        redirect() {
+            this.Vdir = new Vector(
+                RND.getBinary(),
+                RND.getBinary()
+            );
         }
         rebound() {
             this.bounds = this.getBounds();
